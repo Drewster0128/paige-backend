@@ -1,0 +1,26 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Drewster0128/paige-website-backend#readme",
+  "bugs": {
+    "url": "https://github.com/Drewster0128/paige-website-backend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Drewster0128/paige-website-backend.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "googleapis": "^173.0.0",
+    "sharp": "^0.35.3",
+    "steam": "^1.4.1"
+  }
+}
