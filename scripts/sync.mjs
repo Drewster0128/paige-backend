@@ -4,14 +4,15 @@ import { Writable } from "stream"
 import { mkdir } from "fs/promises";
 import sharp from "sharp"
 
+const credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+
 const auth = new google.auth.GoogleAuth({
-    keyFile: process.env.KEYFILE,
+    credentials,
     scopes: [
         "https://www.googleapis.com/auth/spreadsheets.readonly",
         "https://www.googleapis.com/auth/drive.readonly"
     ]
 });
-
 const sheets = google.sheets({
     version: 'v4',
     auth
