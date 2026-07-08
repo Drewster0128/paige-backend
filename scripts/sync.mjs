@@ -1,10 +1,18 @@
 import { google } from "googleapis"
 import { promises, createWriteStream, existsSync} from "fs"
-import { Writable } from "stream"
+import { Writable, Readable } from "stream"
 import { mkdir } from "fs/promises";
 import sharp from "sharp"
+import { Client } from "basic-ftp";
 
 const credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+
+const hostingerFTPCredentials = {
+        host: process.env.HOSTINGER_FTP_HOST,
+        port: process.env.HOSTINGER_FTP_PORT,
+        user: process.env.HOSTINGER_FTP_USERNAME,
+        password: process.env.HOSTINGER_FTP_PASSWORD
+    }
 
 const auth = new google.auth.GoogleAuth({
     credentials,
@@ -48,8 +56,22 @@ async function getMetaData() {
 }
 
 // saves metadata into json file
-async function saveMetaData(metadata, filename) {
-    await promises.writeFile(filename, metadata, 'utf8');
+async function saveMetaData(metadata) {
+
+    let metaDataReadableStream = Readable.from(metadata);
+
+    let hostinger_file_storage = new Client();
+
+    try {
+        await hostinger_file_storage.access(hostingerFTPCredentials);
+        await hostinger_file_storage.uploadFrom(metaDataReadableStream, "domains/psychedelicqueenartistry.com/public_html/pictures.json");
+        console.log("success");
+    }
+    catch(err) {
+        console.log(err);
+    }
+
+    hostinger_file_storage.close();
 }
 
 async function getArtworkImagesOnDrive() {
@@ -62,14 +84,6 @@ async function getArtworkImagesOnDrive() {
 }
 
 async function updateImages() {
-
-    if(!existsSync('public/img/full')) {
-        await mkdir('public/img/full');
-    }
-
-    if(!existsSync('public/img/4x3')) {
-        await mkdir('public/img/4x3');
-    }
     
     let artworkImages = await getArtworkImagesOnDrive();
 
@@ -83,15 +97,27 @@ async function updateImages() {
         driveImage.title = temp.join("-");
     })
 
-    let localImages = (await promises.readdir('public/img/full')).map((image) => {
-        return image.split(".")[0];
-    });
+    let hostingerFileStorage = new Client();
+    let hostingerImages = [];
 
-    localImages = new Set(localImages);
+    try {
+        await hostingerFileStorage.access(hostingerFTPCredentials);
 
+        hostingerImages = (await hostingerFileStorage.list('domains/psychedelicqueenartistry.com/public_html/img/full')).map((picture) => {
+            return picture.name.split(".")[0];
+        });
+
+        hostingerImages = new Set(hostingerImages);
+
+    }
+    catch(err) {
+        console.log(err);
+        process.exit(1);
+    }
+ 
     for(const driveImage of artworkImages) {
-        if(localImages.has(driveImage.title)) {
-            localImages.delete(driveImage.title);
+        if(hostingerImages.has(driveImage.title)) {
+            hostingerImages.delete(driveImage.title);
         }
         else if(driveImage.name.split(".")[1] !== "HEIC"){
             // driveImage not in local storage, download into public/img/website_images folder
@@ -105,24 +131,59 @@ async function updateImages() {
 
             let metaData = await webpImage.metadata();
 
-            await webpImage.toFile(`public/img/full/${driveImage.title}.webp`);
+            try {
+                let hostingerFileStorage = new Client();
+                await hostingerFileStorage.access(hostingerFTPCredentials);
+                
+                await hostingerFileStorage.uploadFrom(webpImage, `domains/psychedelicqueenartistry.com/public_html/img/full/${driveImage.title}.webp`);
+
+                let fourByThree = await webpImage.resize(metaData.width, Math.trunc(metaData.width * 3/4), {
+                    fit: "cover"
+                })
+
+                await hostingerFileStorage.uploadFrom(fourByThree, `domains/psychedelicqueenartistry.com/public_html/img/4x3/${driveImage.title}.webp`);
+
+                console.log(`uplodaed ${driveImage.title}`)
+            }
+            catch(err) {
+                console.log(err);
+                process.exit(1);
+            }
+
+            //await webpImage.toFile(`public/img/full/${driveImage.title}.webp`);
             
+            /*
             await webpImage.resize(metaData.width, Math.trunc(metaData.width * 3/4), {
                 fit: "cover"
             }).toFile(`public/img/4x3/${driveImage.title}.webp`);
+
+            */
         }
     }
+    console.log("Uploading complete!");
 
     //names remaining in localImages list should be removed
-    for(const localImage of localImages) {
-        //delete full version
-        await promises.unlink(`public/img/full/${localImage}.webp`);
 
-        //delete 4x3 version
-        await promises.unlink(`public/img/4x3/${localImage}.webp`);
+    for(const hostingerImage of hostingerImages) {
+        try {
+            let hostingerFileStorage = new Client();
+
+            await hostingerFileStorage.access(hostingerFTPCredentials);
+
+            await hostingerFileStorage.remove(`domains/psychedelicqueenartistry.com/public_html/img/full/${hostingerImage}.webp`);
+
+            await hostingerFileStorage.remove(`domains/psychedelicqueenartistry.com/public_html/img/4x3/${hostingerImage}.webp`);
+        }
+        catch(err) {
+            console.log(err);
+            process.exit(1);
+        }
     }
 }
 
-let metaData = await getMetaData();
-await saveMetaData(metaData, "src/data/pictures.json");
-await updateImages();
+export async function sync() {
+    let metaData = await getMetaData();
+    await saveMetaData(metaData);
+    await updateImages();
+    console.log("SYNC COMPLETE");
+}
