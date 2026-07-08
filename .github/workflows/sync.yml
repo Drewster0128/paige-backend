@@ -3,6 +3,7 @@ name: Sync Artwork
 on:
   schedule:
     - cron: "*/5 * * * *"
+  workflow_dispatch:
 
 env:
   GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS  }}
