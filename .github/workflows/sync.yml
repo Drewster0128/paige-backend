@@ -28,7 +28,7 @@ jobs:
           node-version: '24.x'
         
       - name: Install dependencies
-        run: npm Install
+        run: npm install
 
       - name: Sync
         run: npm run sync
