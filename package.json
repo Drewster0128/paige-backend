@@ -15,14 +15,14 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sync": "node index.js"
   },
   "dependencies": {
     "basic-ftp": "^6.0.1",
     "fs": "^0.0.1-security",
     "ftp": "^0.3.10",
     "googleapis": "^173.0.0",
-    "node-cron": "^4.6.0",
     "sharp": "^0.35.3",
     "steam": "^1.4.1"
   }
