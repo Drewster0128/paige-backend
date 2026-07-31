@@ -88,7 +88,7 @@ async function updateImages() {
     let artworkImages = await getArtworkImagesOnDrive();
 
     artworkImages.forEach((driveImage) => {
-        let temp = driveImage.name.split(".")[0];
+        let temp = driveImage.name.split(".").slice(0, -1).join("");
         temp = temp.split(/(?=[A-Z])/);
         temp = temp.map((word) => {
             return word.toLowerCase();
@@ -104,6 +104,7 @@ async function updateImages() {
         await hostingerFileStorage.access(hostingerFTPCredentials);
 
         hostingerImages = (await hostingerFileStorage.list('domains/psychedelicqueenartistry.com/public_html/img/full')).map((picture) => {
+            
             return picture.name.split(".")[0];
         });
 
@@ -143,7 +144,7 @@ async function updateImages() {
 
                 await hostingerFileStorage.uploadFrom(fourByThree, `domains/psychedelicqueenartistry.com/public_html/img/4x3/${driveImage.title}.webp`);
 
-                console.log(`uplodaed ${driveImage.title}`)
+                console.log(`uploaded ${driveImage.title}`)
             }
             catch(err) {
                 console.log(err);
