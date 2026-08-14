@@ -200,3 +200,26 @@ export async function sync() {
     await updateImages(metaData);
     console.log("SYNC COMPLETE");
 }
+
+//check if ready to be put on website
+// REQUIREMENTS:
+// 1. Picture with matching name on Artwork Images Google Drive folder
+// 2. All row data populated, except price
+
+//get Art Piece names on Google Sheets
+
+async function getArtPieceNamesOnSheet()
+{
+    let response = await sheets.spreadsheets.values.get({
+        spreadsheetId: process.env.SPREADSHEET_ID,
+        range:"Sheet1"
+    });
+    response = response.data.values;
+
+    let columnNames = response[0];
+    let temp = [];
+
+    console.log(response);
+}
+
+getArtPieceNamesOnSheet()
