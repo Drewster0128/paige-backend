@@ -44,7 +44,8 @@ def fetch_google_sheet_dataframe():
                 )
             )
         )
-        db = db[['Art Piece', 'Description', "Original Size", "Print Sizes", "Date Created", "Medium", "Availability"]].replace("", np.nan, inplace=True)
+        db = db.replace("", np.nan)
+        db["Price"] = db["Price"].replace(np.nan, "")
         db = db.dropna(subset=['Art Piece', 'Description', "Original Size", "Print Sizes", "Date Created", "Medium", "Availability"])
         return db
     except Exception as e:
