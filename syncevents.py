@@ -50,10 +50,10 @@ def pipeline_remove_events(events_db, hostinger_db):
     if hostinger_db == None:
         return events_db
     else:
-        return hostinger_db[hostinger_db[["Title", "Start Date"]].isin(events_db[["Title", "Start Date"]])]
+        return hostinger_db[hostinger_db[["Title", "Start Date", "End Date"]].isin(events_db[["Title", "Start Date", "End Date"]])]
 
 def pipeline_add_events(hostinger_db, events_db):
-    events_to_add = events_db[~events_db[["Title", "Start Date"]].isin(hostinger_db[["Title", "Start Date"]])]
+    events_to_add = events_db[~events_db[["Title", "Start Date", "End Date"]].isin(hostinger_db[["Title", "Start Date", "End Date"]])]
     result = pd.concat([hostinger_db, events_to_add], ignore_index=True)
     result.dropna(inplace=True)
     return result
