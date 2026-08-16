@@ -7,7 +7,8 @@ on:
 
 env:
   GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS  }}
-  SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
+  IMAGES_SPREADSHEET_ID: ${{ secrets.IMAGES_SPREADSHEET_ID }}
+  EVENTS_SPREADSHEET_ID: ${{ secrets.EVENTS_SPREADSHEET_ID }}
   ARTWORK_IMAGES_FOLDER_ID: ${{ secrets.ARTWORK_IMAGES_FOLDER_ID }}
   HOSTINGER_FTP_HOST: ${{ secrets.HOSTINGER_FTP_HOST }}
   HOSTINGER_FTP_USERNAME: ${{ secrets.HOSTINGER_FTP_USERNAME }}
@@ -35,5 +36,8 @@ jobs:
 
       - name: Sync Gallery
         run: python syncgallery.py
+
+      - name: Sync Events
+        run: python syncevents.py
 
       

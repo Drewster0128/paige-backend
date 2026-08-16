@@ -28,7 +28,7 @@ def fetch_google_sheet_dataframe():
         sheet = (
             service.spreadsheets()
             .values()
-            .get(spreadsheetId=os.environ["SPREADSHEET_ID"], range='Sheet1')
+            .get(spreadsheetId=os.environ["IMAGES_SPREADSHEET_ID"], range='Sheet1')
             .execute()
         )
         column_names = sheet['values'][0][0:-1]
