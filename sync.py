@@ -10,6 +10,7 @@ import pdb
 import requests
 import ftplib
 from PIL import Image
+import numpy as np
 
 
 load_dotenv()
@@ -43,6 +44,7 @@ def fetch_google_sheet_dataframe():
                 )
             )
         )
+        db = db.replace("", np.nan)
         db = db.dropna(subset=['Art Piece', 'Description', "Original Size", "Print Sizes", "Date Created", "Medium", "Availability"])
         return db
     except Exception as e:
