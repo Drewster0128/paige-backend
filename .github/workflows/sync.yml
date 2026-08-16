@@ -28,10 +28,10 @@ jobs:
           python-version: '3.13'
         
       - name: Upgrade PIP
-        run: python pip install --upgrade pip
+        run: pip install --upgrade pip
 
       - name: Install Dependencies
-        run: python pip install requirements.txt
+        run: pip install requirements.txt
 
       - name: Sync
         run: python sync.py
