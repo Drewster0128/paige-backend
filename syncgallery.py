@@ -224,7 +224,3 @@ try:
         upload_meta_data_to_hostinger(google_data_frame)
 except Exception as e:
     print(e)
-
-
-# STATUS: get_artwork_to_add and get_artwork_to_remove do not work because the ID syntax currently on the hostinger json does not match the id pattern on the google dataframe
-# TO FIX ABOVE STATUS, I SHOULD CONSIDER WIPING THE FILE AND ALL CURRENT PHOTOS TO GIVE IT A CLEAN SLATE. THAT WILL REQUIRE A CHECK IF pictures.json exists on hostinger

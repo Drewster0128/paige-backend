@@ -33,7 +33,7 @@ jobs:
       - name: Install Dependencies
         run: pip install -r requirements.txt
 
-      - name: Sync
-        run: python sync.py
+      - name: Sync Gallery
+        run: python syncgallery.py
 
       
