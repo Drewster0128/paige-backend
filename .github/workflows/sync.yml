@@ -1,4 +1,4 @@
-name: Sync Artwork
+name: Sync Artwork and Events
 
 on:
   schedule:
