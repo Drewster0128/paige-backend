@@ -156,7 +156,7 @@ def download_artwork_from_drive(artwork_drive_id):
 def transform_to_webp(artwork_buffer):
     webp_buffer = io.BytesIO()
     artwork_image = Image.open(artwork_buffer)
-    artwork_image.save(webp_buffer, format="webp")
+    artwork_image.save(webp_buffer, format="webp", optimize=True)
     webp_buffer.seek(0)
 
     return webp_buffer
@@ -183,7 +183,12 @@ def transform_to_4x3(artwork_buffer):
     lower = (height + target_height) / 2
 
     artwork_image_4x3 = artwork_image_full.crop((left, upper, right, lower))
-    artwork_image_4x3.save(webp_4x3_buffer, format="webp")
+
+    reduced_width = 400
+    reduced_height = int(target_height * reduced_width / target_width)
+
+    artwork_image_4x3 = artwork_image_4x3.resize((reduced_width, reduced_height))
+    artwork_image_4x3.save(webp_4x3_buffer, format="webp", optimize=True)
 
     webp_4x3_buffer.seek(0)
     return webp_4x3_buffer
